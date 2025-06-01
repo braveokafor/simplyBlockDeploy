@@ -656,7 +656,7 @@ resource "aws_iam_instance_profile" "inst_profile" {
 }
 
 resource "aws_instance" "bastion" {
-  ami                    = local.region_ami_map[var.region] # RHEL 9
+  ami                    = data.aws_ami.rhel9.id # RHEL 9
   instance_type          = "t2.micro"
   key_name               = local.selected_key_name
   vpc_security_group_ids = [aws_security_group.bastion_sg.id]
@@ -672,7 +672,7 @@ resource "aws_instance" "bastion" {
 
 resource "aws_instance" "mgmt_nodes" {
   count                  = var.mgmt_nodes
-  ami                    = local.region_ami_map[var.region] # RHEL 9
+  ami                    = data.aws_ami.rhel9.id # RHEL 9
   instance_type          = var.mgmt_nodes_instance_type
   key_name               = local.selected_key_name
   vpc_security_group_ids = [aws_security_group.mgmt_node_sg.id]
@@ -693,6 +693,9 @@ resource "aws_instance" "mgmt_nodes" {
 
   user_data = <<EOF
 #!/bin/bash
+sudo yum update -y
+sudo yum install -y yum-utils xorg-x11-xauth nvme-cli fio
+
 echo "installing sbcli.."
 sudo  yum install -y pip jq
 pip install ${local.sbcli_pkg}
@@ -710,7 +713,7 @@ EOF
 resource "aws_instance" "storage_nodes" {
   for_each = local.snodes
 
-  ami                    = local.ami_map[var.storage_nodes_arch][var.region] # RHEL 9
+  ami                    = data.aws_ami.rhel9.id # RHEL 9
   instance_type          = var.storage_nodes_instance_type
   key_name               = local.selected_key_name
   vpc_security_group_ids = [aws_security_group.storage_nodes_sg.id]
@@ -731,6 +734,9 @@ resource "aws_instance" "storage_nodes" {
 
   user_data = <<EOF
 #!/bin/bash
+sudo yum update -y
+sudo yum install -y yum-utils xorg-x11-xauth nvme-cli fio
+
 sudo sysctl -w vm.nr_hugepages=${var.nr_hugepages}
 cat /proc/meminfo | grep -i hug
 echo "installing sbcli.."
@@ -751,7 +757,7 @@ EOF
 
 resource "aws_instance" "sec_storage_nodes" {
   for_each = local.sec_snodes
-  ami                    = local.ami_map[var.storage_nodes_arch][var.region] # RHEL 9
+  ami                    = data.aws_ami.rhel9.id # RHEL 9
   instance_type          = var.sec_storage_nodes_instance_type
   key_name               = local.selected_key_name
   vpc_security_group_ids = [aws_security_group.storage_nodes_sg.id]
@@ -772,6 +778,9 @@ resource "aws_instance" "sec_storage_nodes" {
 
   user_data = <<EOF
 #!/bin/bash
+sudo yum update -y
+sudo yum install -y yum-utils xorg-x11-xauth nvme-cli fio
+
 sudo sysctl -w vm.nr_hugepages=${var.nr_hugepages}
 cat /proc/meminfo | grep -i hug
 echo "installing sbcli.."
@@ -841,7 +850,7 @@ resource "aws_volume_attachment" "attach_sn" {
 # can be used for testing caching nodes
 resource "aws_instance" "extra_nodes" {
   count                  = var.extra_nodes
-  ami                    = local.ami_map[var.extra_nodes_arch][var.region] # RHEL 9
+  ami                    = data.aws_ami.rhel9.id # RHEL 9
   instance_type          = var.extra_nodes_instance_type
   key_name               = local.selected_key_name
   vpc_security_group_ids = [aws_security_group.extra_nodes_sg.id]
@@ -855,6 +864,9 @@ resource "aws_instance" "extra_nodes" {
   }
   user_data = <<EOF
 #!/bin/bash
+sudo yum update -y
+sudo yum install -y yum-utils xorg-x11-xauth nvme-cli fio
+
 sudo sysctl -w vm.nr_hugepages=${var.nr_hugepages}
 cat /proc/meminfo | grep -i hug
 EOF

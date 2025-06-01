@@ -7,5 +7,8 @@ mgmt_nodes_instance_type    = "m5.large"
 storage_nodes_instance_type = "m5.large"
 extra_nodes_instance_type   = "m6id.large"
 volumes_per_storage_nodes   = 1
-enable_apigateway           = 0
+enable_apigateway           = 1
 env                         = "dev"
+
+enable_eks          = 1
+snode_deploy_on_k8s = "true"
