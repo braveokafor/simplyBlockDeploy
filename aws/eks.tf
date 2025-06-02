@@ -107,7 +107,7 @@ module "eks" {
     bottlerocket = {
       instance_types             = ["m6id.large"]
       ami_type                   = "BOTTLEROCKET_x86_64"
-      capacity_type              = "ON_DEMAND"
+      capacity_type              = "SPOT" //"ON_DEMAND"
       use_custom_launch_template = false
       vpc_security_group_ids     = [aws_security_group.eks_nodes_sg[0].id]
       min_size                   = 0
@@ -159,7 +159,7 @@ module "eks" {
 
       ami_type                = "AL2_x86_64"
       instance_types          = ["t3.large"]
-      capacity_type           = "ON_DEMAND"
+      capacity_type           = "SPOT" //"ON_DEMAND"
       key_name                = local.selected_key_name
       vpc_security_group_ids  = [aws_security_group.eks_nodes_sg[0].id]
       pre_bootstrap_user_data = <<-EOT
@@ -179,7 +179,7 @@ module "eks" {
 
       ami_type                = "AL2_x86_64"
       instance_types          = ["m6id.large"]
-      capacity_type           = "ON_DEMAND"
+      capacity_type           = "SPOT" //"ON_DEMAND"
       key_name                = local.selected_key_name
       vpc_security_group_ids  = [aws_security_group.eks_nodes_sg[0].id]
       pre_bootstrap_user_data = <<-EOT
