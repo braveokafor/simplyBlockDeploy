@@ -107,7 +107,7 @@ module "eks" {
     bottlerocket = {
       instance_types             = ["m6id.large"]
       ami_type                   = "BOTTLEROCKET_x86_64"
-      capacity_type              = "SPOT" //"ON_DEMAND"
+      capacity_type              = "ON_DEMAND"
       use_custom_launch_template = false
       vpc_security_group_ids     = [aws_security_group.eks_nodes_sg[0].id]
       min_size                   = 0
@@ -149,17 +149,18 @@ module "eks" {
     }
 
     eks-nodes = {
-      desired_size = 1
-      min_size     = 1
-      max_size     = 2
+      desired_size = 3
+      min_size     = 3
+      max_size     = 3
 
       labels = {
         role = "general"
       }
 
-      ami_type                = "AL2_x86_64"
-      instance_types          = ["t3.large"]
-      capacity_type           = "SPOT" //"ON_DEMAND"
+      ami_type                = "AL2023_x86_64_STANDARD"
+      // ami_id               = "ami-05b6128c16ec8cac1"
+      instance_types          = ["i3en.6xlarge"]
+      capacity_type           = "ON_DEMAND"
       key_name                = local.selected_key_name
       vpc_security_group_ids  = [aws_security_group.eks_nodes_sg[0].id]
       pre_bootstrap_user_data = <<-EOT
@@ -170,8 +171,8 @@ module "eks" {
     }
 
     cache-nodes = {
-      desired_size = 2
-      min_size     = 2
+      desired_size = 0
+      min_size     = 0
       max_size     = 3
       labels = {
         role = "cache"
@@ -179,7 +180,7 @@ module "eks" {
 
       ami_type                = "AL2_x86_64"
       instance_types          = ["m6id.large"]
-      capacity_type           = "SPOT" //"ON_DEMAND"
+      capacity_type           = "ON_DEMAND"
       key_name                = local.selected_key_name
       vpc_security_group_ids  = [aws_security_group.eks_nodes_sg[0].id]
       pre_bootstrap_user_data = <<-EOT
